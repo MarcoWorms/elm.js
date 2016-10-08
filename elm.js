@@ -1,22 +1,30 @@
+
+const $ = document.querySelector.bind(document)
+
 function bindTriggers(program) {
-  Object.keys(program.viewUpdateTriggers).forEach(selector => {
-    const trigger = program.viewUpdateTriggers[selector]
+
+  const forEachTrigger = (func) => {
+    Object.keys(program.viewUpdateTriggers).forEach(selector => {
+      const trigger = program.viewUpdateTriggers[selector]
+      func(selector, trigger)
+    })
+  }
+
+  forEachTrigger( (selector, trigger) => {
     if (trigger.click) {
       const msg = trigger.click
-      document
-        .querySelector(selector)
-        .onclick = () => { 
-          program.model = program.update(msg, program.model)
-          renderHTML(program)
-        }   
+      document.querySelector(selector).onclick = () => {
+        const model = Immutable.Map(program.model)
+        program.model = program.update(msg, model)
+        renderHTML(program)
+      }
     }
   })
 }
 
 function renderHTML(program) {
-  document
-    .querySelector('body')
-    .innerHTML = program.view(program.model)
+  const renderView = () => program.view(Immutable.Map(program.model))
+  $('body').innerHTML = renderView()
   bindTriggers(program)
 }
 
@@ -39,4 +47,3 @@ function when (value, validValues) {
   }
   return chain
 }
-

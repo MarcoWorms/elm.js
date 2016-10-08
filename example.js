@@ -2,7 +2,7 @@ const program = {
   model: init(),
   update,
   view,
-  viewUpdateTriggers: viewUpdateTriggers()  
+  viewUpdateTriggers: viewUpdateTriggers()
 }
 run(program)
 
@@ -12,31 +12,31 @@ function init() {
   }
 }
 
-function update(msg, model) {
-  return when(msg)
-    .is('Increment', () => {
-      model.counter += 1
-      return model
-    })
-    .is('Decrement', () => {
-      model.counter -= 1
-      return model
-    })
-  .end()
+function update(action, model) {
+  return (
+    when(action)
+      .is('Increment', () => {
+        return model.set('counter', model.get('counter') + 1)
+      })
+      .is('Decrement', () => {
+        return model.set('counter', model.get('counter') - 1)
+      })
+    .end()
+  )
 }
 
 function view(model) {
   return `
     <button class="incrementer">+</button>
     <button class="decrementer">-</button>
-    <p>${model.counter}</p>
+    <p>${model.get('counter')}</p>
   `
 }
 
 function viewUpdateTriggers(model) {
   return {
     '.incrementer': {
-      'click': 'Increment' 
+      'click': 'Increment'
     },
     '.decrementer': {
       'click': 'Decrement'
